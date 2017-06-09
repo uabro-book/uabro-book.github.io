@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400');
+
+* {
+    font-family: Ubuntu, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #444;
+    line-height: 1.4;
+}
+
+body {
+    margin: 0;
+}
