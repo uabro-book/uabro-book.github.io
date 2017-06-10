@@ -40,7 +40,7 @@ DC.ready(() => {
     class: 'view'
   }).into(app);
 
-  const controls = DC({class: 'controls'}).into(app);
+  const controls = DC({class: 'controls center'}).into(app);
 
   const chapterList = [
     {
@@ -58,6 +58,10 @@ DC.ready(() => {
     {
       title: 'Four ways of behavior',
       page: 'four-ways-of-behavior'
+    },
+    {
+      title: 'Priority project',
+      page: 'priority-project'
     },
     {
       title: 'True or simulation',
@@ -84,7 +88,7 @@ DC.ready(() => {
   chapterList.getIndex = page => {
     const len = chapterList.length;
     for (let i = 0; i < len; i += 1) {
-      if(chapterList[i].page === page) return i;
+      if (chapterList[i].page === page) return i;
     }
   };
 
@@ -100,13 +104,21 @@ DC.ready(() => {
     return chapterList[index - 1];
   };
 
+  chapterList.getPage = page => {
+    if (!page) return;
+    if (typeof page === 'object') page = page.page;
+    return chapterList.find(p => p.page === page);
+  };
+
+  const ram = {};
+
   let curChapter;
 
   const prev = DC('button', {
     t: '< prev',
     events: {
       click() {
-        go(chapterList.getPrev(curChapter));
+        go(chapterList.getPrev(curChapter), true);
       }
     },
     prevented: ['click']
@@ -124,7 +136,7 @@ DC.ready(() => {
 
   const content = DC({
     class: 'content'
-  }).into(app).hide();
+  }).hide();
 
   chapterList.forEach(c => {
     DC('button', {
@@ -150,20 +162,51 @@ DC.ready(() => {
   controls.list([
     prev,
     contentB,
-    next
+    next,
+    content
   ]);
 
   go(localStorage.getItem('chapter') || chapterList[0]);
 
-  function go(page) {
+  function go(page, prepend) {
     if (!page) return;
-    if (typeof page === 'object') page = page.page;
+    let _page;
+    if (typeof page === 'object') {
+      _page = page;
+      page = page.page;
+    } else {
+      _page = chapterList.getPage(page);
+    }
+    const c = ram[page] || DC({class: 'chapter'});
+    if (ram[page]) {
+      curChapter = page;
+      return insert(ram[page], page);
+    }
     load(page).then(d => {
       curChapter = page;
-      localStorage.setItem('chapter', curChapter);
-      view.h = d;
-      updateControls();
+      c.h = d || '<div class="chapter-title">' + _page.title + '</div>';
+      insert(c, page);
     })
+  }
+
+  function insert(c, page) {
+    localStorage.setItem('chapter', curChapter);
+    ram[page] = c;
+    let target = chapterList.getPage(chapterList.getPrev(page));
+    if (target) target = ram[target.page];
+    if (target) {
+      c.after(target);
+    } else {
+      target = chapterList.getPage(chapterList.getNext(page));
+      if (target) target = ram[target.page];
+      if (target) {
+        c.before(target);
+      } else {
+        c.into(view);
+      }
+    }
+    window.scrollTo(0, c.offsetTop - 80);
+    updateControls();
   }
 
   function updateControls() {
