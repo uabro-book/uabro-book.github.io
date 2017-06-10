@@ -139,3 +139,9 @@ p {
     font-size: 14px;
 }
 
+.load-animation {
+    height: 1px;
+    background: #3091fd;
+    box-shadow: 0 0 4px #3ea2ff;
+    transition: .75s;
+}

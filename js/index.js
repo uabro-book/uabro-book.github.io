@@ -46,12 +46,16 @@ const load = name => {
   xhr.onreadystatechange = () => {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
+        gmtr.emit('loaded', {name: name, loaded: 1, total: 1});
         q.resolve(xhr.responseText);
       }
       else {
         q.reject('Could not load data.');
       }
     }
+  };
+  xhr.onprogress = e => {
+    gmtr.emit('loaded', {name: name, loaded: e.loaded, total: e.total});
   };
   xhr.send();
   return q;
@@ -199,12 +203,35 @@ DC.ready(() => {
     let allChaptersLoaded = !loadAllMode;
 
     if (loadAllMode) {
+      controls.hide();
+      const anim = DC({class: 'load-animation'}).into(view);
+      anim.css({width: 0});
+      {
+        const info = {};
+        const len = chapterList.length;
+        gmtr.on('loaded', o => {
+          if (!info[o.name]) info[o.name] = {};
+          const i = info[o.name];
+          i.loaded = o.loaded;
+          i.total = o.total;
+          let res = 0;
+          DC.iterObj(info, (k, v) => {
+            res += v.loaded / v.total;
+          });
+          res *= 100 / len;
+          anim.css({width: res + '%'});
+        });
+      }
       Q.all(chapterList.map(c => go(c.page, true, true))).then(() => {
         allChaptersLoaded = true;
-        chapterList.forEach(c => ram[c.page].into(view));
-        const top = localStorage.getItem('top');
-        go(localStorage.getItem('chapter') || chapterList[0]);
-        if (typeof top === 'string') window.scrollTo(0, top);
+        setTimeout(() => {
+          view.clear();
+          chapterList.forEach(c => ram[c.page].into(view));
+          controls.show();
+          const top = localStorage.getItem('top');
+          go(localStorage.getItem('chapter') || chapterList[0]);
+          if (typeof top === 'string') window.scrollTo(0, top);
+        }, 750);
       });
     } else {
       go(localStorage.getItem('chapter') || chapterList[0]);
@@ -215,21 +242,21 @@ DC.ready(() => {
       if (allChaptersLoaded) {
         localStorage.setItem('top', top);
       }
-      if(prevTop === false) {
+      if (prevTop === false) {
         prevTop = top;
       } else {
         let h = controls.offsetHeight;
         let nt = prevTop - top;
-        if(top > prevTop) {
-          if(nt < -h) {
+        if (top > prevTop) {
+          if (nt < -h) {
             nt = -h;
             prevTop = top - h;
           }
-          controls.css({top:nt});
+          controls.css({top: nt});
         } else {
-          if(nt) {
+          if (nt) {
             prevTop = top;
-            controls.css({top:0});
+            controls.css({top: 0});
           }
         }
       }
@@ -249,13 +276,13 @@ DC.ready(() => {
     const q = new Q;
     if (ram[page]) {
       curChapter = page;
-      if(!noinsert) insert(ram[page], page, noscroll);
+      if (!noinsert) insert(ram[page], page, noscroll);
       q.resolve();
     } else {
       load(page).then(d => {
         curChapter = page;
         c.h = d || '<div class="chapter-title">' + _page.title + '</div>';
-        if(noinsert) {
+        if (noinsert) {
           ram[page] = c;
         } else {
           insert(c, page, noscroll);
@@ -290,7 +317,7 @@ DC.ready(() => {
 
   function showControls() {
     prevTop = window.pageYOffset;
-    controls.css({top:0});
+    controls.css({top: 0});
   }
 
   function updateControls() {
