@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": "pug -w raw-pug -o chapters"
+  }
+}

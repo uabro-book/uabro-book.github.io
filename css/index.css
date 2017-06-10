@@ -11,3 +11,94 @@
 body {
     margin: 0;
 }
+
+p {
+    text-indent: 30px;
+}
+
+.body {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.view {
+    padding: 10px 5px;
+    box-shadow: 0 7px 5px -7px rgba(0, 0, 0, 0.5);
+}
+
+.chapter-title {
+    font-size: 2em;
+    text-align: center;
+}
+
+.controls {
+    display: flex;
+}
+
+.controls button {
+    flex: 1;
+    padding: 10px;
+    background: #ececec;
+    border: 0;
+    cursor: pointer;
+    transition: .2s;
+    margin: 10px;
+}
+
+.invisible {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.content button {
+    display: block;
+    margin: 30px 0;
+    width: 100%;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid silver;
+}
+
+.content button:hover {
+    background: silver;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
+.logo {
+    color: rgb(80, 80, 80);
+    background: url(/img/logo.svg) transparent;
+    background-position: 0px -10px;
+    background-size: 100px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin: 15px 15px 5px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.12s;
+    width: 192px;
+    height: 100px;
+    vertical-align: middle;
+}
+
+.logo > .name {
+    font-size: 30px;
+    top: 28.5px;
+    left: 75px;
+}
+
+.logo > div {
+    font-family: Corbel, Ubuntu, Segoe UI, sans-serif;
+    position: absolute;
+    top: 75px;
+    left: 55px;
+    font-size: 14px;
+}
+
