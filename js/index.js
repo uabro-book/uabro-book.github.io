@@ -142,6 +142,31 @@ DC.ready(() => {
   let curChapter;
   let prevTop = false;
 
+  const content = DC({
+    class: 'content'
+  }).hide();
+
+  content.chapters = [];
+
+  chapterList.forEach(c => {
+    content.chapters[c.page] = DC('button', {
+      t: c.title,
+      events: {
+        click() {
+          go(c.page);
+          content.activate(c.page);
+        }
+      }
+    }).into(content);
+  });
+
+  content.activate = function (page) {
+    if(!content.chapters[page]) return;
+    if(content.curChapter) content.curChapter.removeClass('active');
+    content.curChapter = content.chapters[page];
+    content.curChapter.addClass('active');
+  };
+
   const prev = DC('button', {
     t: '< prev',
     events: {
@@ -164,21 +189,6 @@ DC.ready(() => {
     prevented: ['click']
   });
 
-  const content = DC({
-    class: 'content'
-  }).hide();
-
-  chapterList.forEach(c => {
-    DC('button', {
-      t: c.title,
-      events: {
-        click() {
-          go(c.page);
-        }
-      }
-    }).into(content);
-  });
-
   const contentB = DC('button', {
     t: 'content',
     events: {
@@ -199,10 +209,9 @@ DC.ready(() => {
   ]);
 
   {
-    const loadAllMode = true;
-    let allChaptersLoaded = !loadAllMode;
+    let allChaptersLoaded = false;
 
-    if (loadAllMode) {
+    {
       controls.hide();
       const anim = DC({class: 'load-animation'}).into(view);
       anim.css({width: 0});
@@ -240,16 +249,34 @@ DC.ready(() => {
           const h = controls.offsetHeight;
           prevTop = top - h;
           controls.css({top: prevTop});
+
+          calcBounds();
         }, delay);
       });
-    } else {
-      go(localStorage.getItem('chapter') || chapterList[0]);
+    }
+
+    const bounds = [];
+
+    function calcBounds() {
+      bounds.length = 0;
+      DC.iterObj(ram, (page, element) => {
+        bounds.push({top: element.offsetTop, name: page});
+      });
+      bounds.sortBy('top');
+      const top = window.pageYOffset;
+      let cur = bounds.find(p => p.top > top + 100);
+      cur = chapterList.getPrev(cur.name);
+      if(!cur) return;
+      if(curChapter !== cur.page) {
+        saveChapter(cur.page);
+      }
     }
 
     DC.onwindow('scroll', () => {
       const top = window.pageYOffset;
       if (allChaptersLoaded) {
         localStorage.setItem('top', top);
+        setTimeout(calcBounds);
       }
       if (prevTop === false) {
         prevTop = top;
@@ -299,6 +326,7 @@ DC.ready(() => {
         q.resolve();
       });
     }
+    content.activate(curChapter);
     return q;
   }
 
@@ -318,10 +346,18 @@ DC.ready(() => {
       }
     }
     if (!ignore) {
-      localStorage.setItem('chapter', curChapter);
+      saveChapter();
       window.scrollTo(0, c.offsetTop - 80);
     }
     updateControls();
+  }
+
+  function saveChapter(chapter) {
+    if(chapter && curChapter !== chapter) {
+      curChapter = chapter;
+      content.activate(curChapter);
+    }
+    localStorage.setItem('chapter', curChapter);
   }
 
   function showControls() {

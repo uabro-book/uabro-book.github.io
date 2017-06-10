@@ -101,6 +101,12 @@ p {
     opacity: 1;
 }
 
+.content .active {
+    background: darkslategray;
+    background: linear-gradient(135deg, rgb(56, 150, 114) 0%,rgb(16, 74, 68) 100%);
+    color: white;
+}
+
 .center {
     text-align: center;
 }
