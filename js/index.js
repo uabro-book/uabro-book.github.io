@@ -222,8 +222,14 @@ DC.ready(() => {
           anim.css({width: res + '%'});
         });
       }
+
+      const started = Date.now();
+
       Q.all(chapterList.map(c => go(c.page, true, true))).then(() => {
         allChaptersLoaded = true;
+        let delay = Date.now() - started;
+        delay = delay < 750 ? 750 - delay : 0;
+
         setTimeout(() => {
           view.clear();
           chapterList.forEach(c => ram[c.page].into(view));
@@ -233,8 +239,8 @@ DC.ready(() => {
           if (typeof top === 'string') window.scrollTo(0, top);
           const h = controls.offsetHeight;
           prevTop = top - h;
-          controls.css({top:prevTop});
-        }, 750);
+          controls.css({top: prevTop});
+        }, delay);
       });
     } else {
       go(localStorage.getItem('chapter') || chapterList[0]);
@@ -255,7 +261,7 @@ DC.ready(() => {
             nt = -h;
             prevTop = top - h;
           }
-          controls.css({top: nt});
+          controls.css({top: (nt / 3) + '%'});
         } else {
           if (nt) {
             prevTop = top;
