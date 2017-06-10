@@ -231,6 +231,9 @@ DC.ready(() => {
           const top = localStorage.getItem('top');
           go(localStorage.getItem('chapter') || chapterList[0]);
           if (typeof top === 'string') window.scrollTo(0, top);
+          const h = controls.offsetHeight;
+          prevTop = top - h;
+          controls.css({top:prevTop});
         }, 750);
       });
     } else {
@@ -245,7 +248,7 @@ DC.ready(() => {
       if (prevTop === false) {
         prevTop = top;
       } else {
-        let h = controls.offsetHeight;
+        const h = controls.offsetHeight;
         let nt = prevTop - top;
         if (top > prevTop) {
           if (nt < -h) {
