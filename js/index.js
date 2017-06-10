@@ -165,32 +165,13 @@ DC.ready(() => {
     if(content.curChapter) content.curChapter.removeClass('active');
     content.curChapter = content.chapters[page];
     content.curChapter.addClass('active');
+    title.t = content.curChapter.t;
+    content.hide();
   };
 
-  const prev = DC('button', {
-    t: '< prev',
-    events: {
-      click() {
-        go(chapterList.getPrev(curChapter));
-        showControls();
-      }
-    },
-    prevented: ['click']
-  });
-
-  const next = DC('button', {
-    t: 'next >',
-    events: {
-      click() {
-        go(chapterList.getNext(curChapter));
-        showControls();
-      }
-    },
-    prevented: ['click']
-  });
-
-  const contentB = DC('button', {
+  const title = DC('button', {
     t: 'content',
+    class: 'title',
     events: {
       click() {
         content.style.display === 'none' ?
@@ -202,9 +183,7 @@ DC.ready(() => {
   });
 
   controls.list([
-    prev,
-    contentB,
-    next,
+    title,
     content
   ]);
 
@@ -349,7 +328,6 @@ DC.ready(() => {
       saveChapter();
       window.scrollTo(0, c.offsetTop - 80);
     }
-    updateControls();
   }
 
   function saveChapter(chapter) {
@@ -363,20 +341,5 @@ DC.ready(() => {
   function showControls() {
     prevTop = window.pageYOffset;
     controls.css({top: 0});
-  }
-
-  function updateControls() {
-    const i = chapterList.getIndex(curChapter);
-    if (i < 1) {
-      prev.addClass('invisible')
-    } else {
-      prev.removeClass('invisible')
-    }
-    if (i === chapterList.length - 1) {
-      next.addClass('invisible')
-    } else {
-      next.removeClass('invisible')
-    }
-    content.hide()
   }
 });

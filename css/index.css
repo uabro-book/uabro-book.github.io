@@ -107,6 +107,12 @@ p {
     color: white;
 }
 
+.title:before, .title:after {
+    content: '•';
+    color: silver;
+    padding: 5px;
+}
+
 .center {
     text-align: center;
 }
