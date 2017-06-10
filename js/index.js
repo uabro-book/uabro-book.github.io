@@ -1,6 +1,10 @@
 class Q {
   then(cb) {
-    this.cb = cb;
+    if (this.data) {
+      cb(data)
+    } else {
+      this.cb = cb;
+    }
   }
 
   catch(err) {
@@ -8,11 +12,30 @@ class Q {
   }
 
   resolve(data) {
-    this.cb && this.cb(data);
+    if (this.cb) {
+      this.cb(data);
+    } else {
+      this.data = data;
+    }
   }
 
   reject(err) {
     this.err && this.err(err);
+  }
+
+  static all(arr) {
+    const len = arr.length;
+    let ready = 0;
+    const _q = new Q;
+    arr.forEach(q => {
+      q.then(() => {
+        ready += 1;
+        if (ready === len) {
+          _q.resolve();
+        }
+      });
+    });
+    return _q;
   }
 }
 
@@ -113,12 +136,14 @@ DC.ready(() => {
   const ram = {};
 
   let curChapter;
+  let prevTop = false;
 
   const prev = DC('button', {
     t: '< prev',
     events: {
       click() {
-        go(chapterList.getPrev(curChapter), true);
+        go(chapterList.getPrev(curChapter));
+        showControls();
       }
     },
     prevented: ['click']
@@ -129,6 +154,7 @@ DC.ready(() => {
     events: {
       click() {
         go(chapterList.getNext(curChapter));
+        showControls();
       }
     },
     prevented: ['click']
@@ -153,7 +179,9 @@ DC.ready(() => {
     t: 'content',
     events: {
       click() {
-        content.show();
+        content.style.display === 'none' ?
+          content.show() :
+          content.hide();
       }
     },
     prevented: ['click']
@@ -166,9 +194,49 @@ DC.ready(() => {
     content
   ]);
 
-  go(localStorage.getItem('chapter') || chapterList[0]);
+  {
+    const loadAllMode = true;
+    let allChaptersLoaded = !loadAllMode;
 
-  function go(page, prepend) {
+    if (loadAllMode) {
+      Q.all(chapterList.map(c => go(c.page, true, true))).then(() => {
+        allChaptersLoaded = true;
+        chapterList.forEach(c => ram[c.page].into(view));
+        const top = localStorage.getItem('top');
+        go(localStorage.getItem('chapter') || chapterList[0]);
+        if (typeof top === 'string') window.scrollTo(0, top);
+      });
+    } else {
+      go(localStorage.getItem('chapter') || chapterList[0]);
+    }
+
+    DC.onwindow('scroll', () => {
+      const top = window.pageYOffset;
+      if (allChaptersLoaded) {
+        localStorage.setItem('top', top);
+      }
+      if(prevTop === false) {
+        prevTop = top;
+      } else {
+        let h = controls.offsetHeight;
+        let nt = prevTop - top;
+        if(top > prevTop) {
+          if(nt < -h) {
+            nt = -h;
+            prevTop = top - h;
+          }
+          controls.css({top:nt});
+        } else {
+          if(nt) {
+            prevTop = top;
+            controls.css({top:0});
+          }
+        }
+      }
+    });
+  }
+
+  function go(page, noscroll, noinsert) {
     if (!page) return;
     let _page;
     if (typeof page === 'object') {
@@ -178,19 +246,27 @@ DC.ready(() => {
       _page = chapterList.getPage(page);
     }
     const c = ram[page] || DC({class: 'chapter'});
+    const q = new Q;
     if (ram[page]) {
       curChapter = page;
-      return insert(ram[page], page);
+      if(!noinsert) insert(ram[page], page, noscroll);
+      q.resolve();
+    } else {
+      load(page).then(d => {
+        curChapter = page;
+        c.h = d || '<div class="chapter-title">' + _page.title + '</div>';
+        if(noinsert) {
+          ram[page] = c;
+        } else {
+          insert(c, page, noscroll);
+        }
+        q.resolve();
+      });
     }
-    load(page).then(d => {
-      curChapter = page;
-      c.h = d || '<div class="chapter-title">' + _page.title + '</div>';
-      insert(c, page);
-    })
+    return q;
   }
 
-  function insert(c, page) {
-    localStorage.setItem('chapter', curChapter);
+  function insert(c, page, ignore) {
     ram[page] = c;
     let target = chapterList.getPage(chapterList.getPrev(page));
     if (target) target = ram[target.page];
@@ -205,8 +281,16 @@ DC.ready(() => {
         c.into(view);
       }
     }
-    window.scrollTo(0, c.offsetTop - 80);
+    if (!ignore) {
+      localStorage.setItem('chapter', curChapter);
+      window.scrollTo(0, c.offsetTop - 80);
+    }
     updateControls();
+  }
+
+  function showControls() {
+    prevTop = window.pageYOffset;
+    controls.css({top:0});
   }
 
   function updateControls() {
