@@ -75,12 +75,20 @@ DC.ready(() => {
       page: 'cover-page'
     },
     {
-      title: 'Finale of development',
-      page: 'finale-of-development'
+      title: 'Time is now',
+      page: 'time-is-now'
     },
     {
       title: 'Intelligent freedom',
       page: 'intelligent-freedom'
+    },
+    {
+      title: 'Finale of development',
+      page: 'finale-of-development'
+    },
+    {
+      title: 'Chaos and order',
+      page: 'chaos-and-order'
     },
     {
       title: 'Four ways of behavior',
@@ -107,8 +115,8 @@ DC.ready(() => {
       page: 'infinite-beauty-of-consciousness'
     },
     {
-      title: 'Conclusion',
-      page: 'conclusion'
+      title: 'Not conclusion',
+      page: 'not-conclusion'
     },
   ];
 
@@ -239,12 +247,23 @@ DC.ready(() => {
     function calcBounds() {
       bounds.length = 0;
       DC.iterObj(ram, (page, element) => {
-        bounds.push({top: element.offsetTop, name: page});
+        bounds.push({top: element.offsetTop, page: page});
       });
       bounds.sortBy('top');
       const top = window.pageYOffset;
-      let cur = bounds.find(p => p.top > top + 100);
-      cur = chapterList.getPrev(cur.name);
+      const len = bounds.length;
+      let cur;
+      for(let i = 0; i < len; i++){
+        let p = bounds[i];
+        if(i === len - 1) {
+          cur = p;
+          break;
+        }
+        if(p.top > top + 100) {
+          cur = bounds[i - 1];
+          break;
+        }
+      }
       if(!cur) return;
       if(curChapter !== cur.page) {
         saveChapter(cur.page);
