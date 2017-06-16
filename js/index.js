@@ -118,6 +118,10 @@ DC.ready(() => {
       title: 'Not conclusion',
       page: 'not-conclusion'
     },
+    {
+      title: 'Vocabulary',
+      page: 'vocabulary'
+    },
   ];
 
   chapterList.getIndex = page => {
