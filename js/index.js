@@ -75,8 +75,8 @@ DC.ready(() => {
       page: 'cover-page'
     },
     {
-      title: 'Time is now',
-      page: 'time-is-now'
+      title: 'Introduction',
+      page: 'introduction'
     },
     {
       title: 'Intelligent freedom',
