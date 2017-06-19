@@ -1,5 +1,7 @@
 {
   "scripts": {
-    "start": "pug -w raw-pug -o chapters"
+    "start": "npm run server & npm run pug",
+    "server": "http-server -c-1 -p 3490",
+    "pug": "pug -w raw-pug -o chapters"
   }
 }

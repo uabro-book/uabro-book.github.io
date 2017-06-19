@@ -145,6 +145,7 @@ p {
     font-size: 30px;
     top: 28.5px;
     left: 75px;
+    font-weight: 400;
 }
 
 .logo > div {
@@ -153,6 +154,7 @@ p {
     top: 75px;
     left: 55px;
     font-size: 14px;
+    line-height: 1.4;
 }
 
 .load-animation {
