@@ -169,6 +169,7 @@ p {
 
 .logo:before {
     content: ' ';
+    background: rgb(56, 33, 0);
     background: linear-gradient(135deg, rgb(56, 33, 0) 0%,rgb(121, 34, 0) 100%);
     position: absolute;
     left: 0;
