@@ -1,3 +1,7 @@
+/**
+ * @namespace DC
+ */
+
 class Q {
   then(cb) {
     if (this.data) {
@@ -256,18 +260,16 @@ DC.ready(() => {
       bounds.sortBy('top');
       const top = window.pageYOffset;
       const len = bounds.length;
-      let cur;
-      for(let i = 0; i < len; i++){
+      let cur, found;
+      for(let i = len - 1; i; i -= 1){
         let p = bounds[i];
-        if(i === len - 1) {
+        if(p.top < top + 100) {
           cur = p;
-          break;
-        }
-        if(p.top > top + 100) {
-          cur = bounds[i - 1];
+          found = true;
           break;
         }
       }
+      if(!found) cur = bounds[0];
       if(!cur) return;
       if(curChapter !== cur.page) {
         saveChapter(cur.page);

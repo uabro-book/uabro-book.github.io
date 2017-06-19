@@ -127,10 +127,6 @@ p {
 
 .logo {
     color: rgb(80, 80, 80);
-    background: url(/img/logo.svg) transparent;
-    background-position: 0px -10px;
-    background-size: 100px;
-    background-repeat: no-repeat;
     display: inline-block;
     margin: 15px 15px 5px;
     cursor: pointer;
@@ -138,7 +134,21 @@ p {
     transition: 0.12s;
     width: 192px;
     height: 100px;
+    border-radius: 4px;
+    overflow: hidden;
     vertical-align: middle;
+}
+
+.logo > .uabro {
+    background: url(/img/logo.svg) transparent;
+    background-position: 0 -10px;
+    background-size: 100px;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .logo > .name {
@@ -155,6 +165,32 @@ p {
     left: 55px;
     font-size: 14px;
     line-height: 1.4;
+}
+
+.logo:before {
+    content: ' ';
+    background: linear-gradient(135deg, rgb(56, 33, 0) 0%,rgb(121, 34, 0) 100%);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0;
+    transition: .4s;
+}
+
+.logo:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4588235294117647);
+    transform: translateY(-4px);
+}
+
+.logo:hover div {
+    color: white;
+}
+
+.logo:hover:before {
+    opacity: 1;
 }
 
 .load-animation {
