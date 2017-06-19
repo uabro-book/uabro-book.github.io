@@ -1,5 +1,7 @@
 #!/bin/sh
 
+pug raw-pug -o chapters
+
 if [ "$#" -ne 0 ]; then
     comment="$@"
     else
