@@ -11,10 +11,6 @@ class Q {
     }
   }
 
-  catch(err) {
-    this.err = err;
-  }
-
   resolve(data) {
     if (this.cb) {
       this.cb(data);
@@ -232,7 +228,7 @@ DC.ready(() => {
       Q.all(chapterList.map(c => go(c.page, true, true))).then(() => {
         allChaptersLoaded = true;
         let delay = Date.now() - started;
-        delay = delay < 750 ? 750 - delay : 0;
+        delay = delay < 1256 ? 1256 - delay : 0;
 
         setTimeout(() => {
           view.clear();
@@ -361,10 +357,5 @@ DC.ready(() => {
       content.activate(curChapter);
     }
     localStorage.setItem('chapter', curChapter);
-  }
-
-  function showControls() {
-    prevTop = window.pageYOffset;
-    controls.css({top: 0});
   }
 });
