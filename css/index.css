@@ -201,6 +201,7 @@ p {
     height: 1px;
     background: #3091fd;
     box-shadow: 0 0 4px #3ea2ff;
+    margin-top: 35vh;
     transition: 1.256s;
 }
 
