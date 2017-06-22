@@ -107,8 +107,8 @@ DC.ready(() => {
       page: 'ecosystem'
     },
     {
-      title: 'Lifetime as a factor',
-      page: 'lifetime-as-a-factor'
+      title: 'Focus on',
+      page: 'focus-on'
     },
     {
       title: 'Infinite beauty of consciousness',
