@@ -62,12 +62,12 @@ const load = name => {
 };
 
 DC.ready(() => {
-  const app = DC({class: 'body'}).into(document.body);
+  const app = DC({c: 'body'}).into(document.body);
   const view = DC({
-    class: 'view'
+    c: 'view'
   }).into(app);
 
-  const controls = DC({class: 'controls center'}).into(app);
+  const controls = DC({c: 'controls center'}).into(app);
 
   const chapterList = [
     {
@@ -155,7 +155,7 @@ DC.ready(() => {
   let prevTop = false;
 
   const content = DC({
-    class: 'content'
+    c: 'content'
   }).hide();
 
   content.chapters = [];
@@ -183,7 +183,7 @@ DC.ready(() => {
 
   const title = DC('button', {
     t: 'content',
-    class: 'title',
+    c: 'title',
     events: {
       click() {
         content.style.display === 'none' ?
@@ -204,7 +204,7 @@ DC.ready(() => {
 
     {
       controls.hide();
-      const anim = DC({class: 'load-animation'}).into(view);
+      const anim = DC({c: 'load-animation'}).into(view);
       anim.css({width: 0});
       {
         const info = {};
@@ -308,7 +308,7 @@ DC.ready(() => {
     } else {
       _page = chapterList.getPage(page);
     }
-    const c = ram[page] || DC({class: 'chapter'});
+    const c = ram[page] || DC({c: 'chapter'});
     const q = new Q;
     if (ram[page]) {
       curChapter = page;
