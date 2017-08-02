@@ -209,6 +209,10 @@ p {
     display: flex;
 }
 
+.no-scroll {
+    overflow: hidden;
+}
+
 @media (max-width:400px) {
     * {
         font-size: 16px;

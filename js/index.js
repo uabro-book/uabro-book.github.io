@@ -158,6 +158,20 @@ DC.ready(() => {
     c: 'content'
   }).hide();
 
+  content.render = () => {
+    if (content.style.display === 'none') {
+      content.show();
+      document.body.addClass('no-scroll');
+    } else {
+      content._hide();
+    }
+  };
+
+  content._hide = () => {
+    content.hide();
+    document.body.removeClass('no-scroll');
+  };
+
   content.chapters = [];
 
   chapterList.forEach(c => {
@@ -173,12 +187,12 @@ DC.ready(() => {
   });
 
   content.activate = function (page) {
-    if(!content.chapters[page]) return;
-    if(content.curChapter) content.curChapter.removeClass('active');
+    if (!content.chapters[page]) return;
+    if (content.curChapter) content.curChapter.removeClass('active');
     content.curChapter = content.chapters[page];
     content.curChapter.addClass('active');
     title.t = content.curChapter.t;
-    content.hide();
+    content._hide();
   };
 
   const title = DC('button', {
@@ -186,9 +200,7 @@ DC.ready(() => {
     c: 'title',
     events: {
       click() {
-        content.style.display === 'none' ?
-          content.show() :
-          content.hide();
+        content.render();
       }
     },
     prevented: ['click']
@@ -257,17 +269,17 @@ DC.ready(() => {
       const top = window.pageYOffset;
       const len = bounds.length;
       let cur, found;
-      for(let i = len - 1; i; i -= 1){
+      for (let i = len - 1; i; i -= 1) {
         let p = bounds[i];
-        if(p.top < top + 100) {
+        if (p.top < top + 100) {
           cur = p;
           found = true;
           break;
         }
       }
-      if(!found) cur = bounds[0];
-      if(!cur) return;
-      if(curChapter !== cur.page) {
+      if (!found) cur = bounds[0];
+      if (!cur) return;
+      if (curChapter !== cur.page) {
         saveChapter(cur.page);
       }
     }
@@ -352,7 +364,7 @@ DC.ready(() => {
   }
 
   function saveChapter(chapter) {
-    if(chapter && curChapter !== chapter) {
+    if (chapter && curChapter !== chapter) {
       curChapter = chapter;
       content.activate(curChapter);
     }

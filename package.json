@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "npm run server & npm run pug & npm run browser",
+    "start": "npm run pug & npm run browser",
     "server": "http-server -c-1 -p 3490",
     "pug": "pug -w raw-pug -o chapters",
     "browser": ". open-browser.sh"
