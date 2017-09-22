@@ -1,7 +1,3 @@
-/**
- * @namespace DC
- */
-
 class Q {
   then(cb) {
     if (this.data) {

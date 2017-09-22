@@ -6,6 +6,6 @@
     "browser": ". open-browser.sh"
   },
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "latest"
   }
 }
