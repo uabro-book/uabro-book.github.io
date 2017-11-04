@@ -67,14 +67,79 @@ p {
 }
 
 .content {
-    max-height: 80%;
     overflow: auto;
     background: whitesmoke;
     background: linear-gradient(135deg, rgb(255, 255, 255) 0%,rgb(230, 230, 230) 100%);
     position: fixed;
-    top: 80px;
-    width: 100%;
+    top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: .33s;
+    pointer-events: none;
+    padding-bottom: 100px;
+    box-sizing: border-box;
+}
+
+.visible-x {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.content-close-wrap {
+    padding: 30px 0;
+}
+
+.content-close {
+    width: 100px;
+    border-radius: 50px;
+    background: #2f2f2f;
+    color: #e6e6e6;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    margin: 0 auto;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.52);
+    transition: .2s;
+}
+
+.content-close:hover {
+    background: #0f4765;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.52);
+    color: white;
+    width: 120px;
+}
+
+.content-close:active {
+    background: black;
+    box-shadow: 0 0;
+    transform: scale(.95);
+}
+
+.content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: rgb(212, 212, 212);
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: #135047;
+}
+
+.content > .right {
+    margin: 0 auto;
+    padding: 30px;
+    max-width: 600px;
+}
+
+.content > .right > i {
+    color: silver;
+    text-shadow: 1px 1px #ffffff;
 }
 
 .content button {
@@ -213,8 +278,31 @@ p {
     overflow: hidden;
 }
 
+.remarkable {
+    background: aliceblue;
+    padding: 8px;
+    font-weight: bold;
+    color: #151515;
+}
+
 @media (max-width:400px) {
     * {
         font-size: 16px;
     }
+}
+
+ul li {
+    position: relative;
+    list-style: none;
+}
+
+ul li:not(:last-child):after {
+    content: '';
+    position: absolute;
+    background-color: #48778e;
+    background: linear-gradient(90deg, #48778e, transparent);
+    left: -10px;
+    bottom: -2px;
+    width: 75%;
+    height: 1px;
 }

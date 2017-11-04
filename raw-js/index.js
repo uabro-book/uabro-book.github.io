@@ -152,23 +152,40 @@ DC.ready(() => {
 
   const content = DC({
     c: 'content'
-  }).hide();
+  });
 
   content.render = () => {
-    if (content.style.display === 'none') {
-      content.show();
+    if (!content.classList.contains('visible-x')) {
+      content.addClass('visible-x');
       document.body.addClass('no-scroll');
+      content.scrollTo(0, 0);
     } else {
       content._hide();
     }
   };
 
   content._hide = () => {
-    content.hide();
+    content.removeClass('visible-x');
     document.body.removeClass('no-scroll');
   };
 
   content.chapters = [];
+
+    {
+        const wrap = DC({
+            c: 'content-close-wrap'
+        }).into(content);
+
+        DC({
+            c: 'content-close',
+            t: 'hide',
+            events: {
+                click() {
+                    content._hide();
+                }
+            }
+        }).into(wrap);
+    }
 
   chapterList.forEach(c => {
     content.chapters[c.page] = DC('button', {
@@ -176,11 +193,18 @@ DC.ready(() => {
       events: {
         click() {
           go(c.page);
-          content.activate(c.page);
+          prevTop = window.pageYOffset;
         }
       }
     }).into(content);
   });
+
+    {
+        DC({
+            c: 'right',
+            h: '<i>by Oleksii Shnyra</i>',
+        }).into(content);
+    }
 
   content.activate = function (page) {
     if (!content.chapters[page]) return;
