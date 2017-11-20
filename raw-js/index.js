@@ -1,3 +1,5 @@
+'use strict';
+
 class Q {
     then(cb) {
         if (this.data) {
@@ -63,6 +65,7 @@ DC.ready(() => {
         c: 'view'
     }).into(app);
 
+    const shared = {};
     const controls = DC({c: 'controls center'}).into(app);
 
     const chapterList = [
@@ -232,7 +235,167 @@ DC.ready(() => {
     ]);
 
     {
+        const canvas = DC('canvas', {
+            c: 'first-canvas'
+        }).into(document.body);
+        const ctx = canvas.getContext('2d');
+        let running = false;
+
+        const fitResolution = (canvas, ctx, width, height) => {
+            const devicePixelRatio = window.devicePixelRatio || 1,
+                backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+                    ctx.mozBackingStorePixelRatio ||
+                    ctx.msBackingStorePixelRatio ||
+                    ctx.oBackingStorePixelRatio ||
+                    ctx.backingStorePixelRatio || 1,
+                ratio = devicePixelRatio / backingStoreRatio;
+            if (devicePixelRatio !== backingStoreRatio) {
+
+                const oldWidth = width;
+                const oldHeight = height;
+
+                canvas.width = oldWidth * ratio;
+                canvas.height = oldHeight * ratio;
+
+                canvas.style.width = oldWidth + 'px';
+                canvas.style.height = oldHeight + 'px';
+
+                ctx.scale(ratio, ratio);
+
+            } else {
+                canvas.width = width;
+                canvas.height = height;
+            }
+        };
+
+        const dots = [];
+        {
+            const colors = [
+                '#1a1a1a',
+                '#c44126',
+                '#cd7c00',
+                '#238dcd',
+                '#e4e000',
+                '#e48900',
+                '#e43b17',
+                '#31cd19',
+                '#cd3fc4',
+                '#562730',
+            ];
+            const maxColors = colors.length - 1;
+
+            for (let i = 0; i < 120; i += 1) {
+                dots.push({
+                    s: randi(10, 45) / 10,
+                    x: randi(0, 100) / 100,
+                    y: randi(0, 100) / 100,
+                    ax: randix(-20, 20) / 21000,
+                    ay: randix(-20, 20) / 21000,
+                    c: colors[randi(0, maxColors)]
+                });
+            }
+        }
+
+        const distance = .05;
+
+        const calcLen = (x, y, x2, y2) => Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+        const getAngle = (x, y, x2, y2) => Math.atan2(y2 - y, x2 - x);
+
+        const halfPI = Math.PI / 2;
+
+        const render = () => {
+            if (!running) return;
+            const ww = window.innerWidth;
+            const wh = window.innerHeight;
+            const _distance = distance * (ww + wh);
+            const visHeight = window.innerHeight / 2;
+            let py = window.pageYOffset;
+            if (py <= visHeight) {
+                requestAnimationFrame(render);
+            } else {
+                running = false;
+                py = visHeight;
+            }
+            fitResolution(canvas, ctx, ww, wh);
+
+            const len = dots.length - 1;
+            for (let i = 0; i <= len; i += 1) {
+                const d = dots[i];
+                const x = d.x += d.ax;
+                const y = d.y += d.ay;
+                if (x > 1 || x < 0) {
+                    d.ax = -d.ax;
+                    d.x = x > 1 ? 1 : 0;
+                }
+                if (y > 1 || y < 0) {
+                    d.ay = -d.ay;
+                    d.y = y > 1 ? 1 : 0;
+                }
+
+                for (let j = i + 1; j <= len; j += 1) {
+                    const _d = dots[j];
+                    const {x, y} = d;
+                    const {x: x2, y: y2} = _d;
+                    const [a, b, a2, b2] = [x * ww, y * wh, x2 * ww, y2 * wh];
+                    const l = calcLen(a, b, a2, b2);
+                    if (l < _distance) {
+                        ctx.beginPath();
+                        const grd = ctx.createLinearGradient(a, b, a2, b2);
+                        grd.addColorStop(0, d.c);
+                        grd.addColorStop(.5, '#46171f');
+                        grd.addColorStop(1, _d.c);
+                        ctx.fillStyle = grd;
+                        ctx.globalAlpha = (1 - l / _distance) * .85 * (1 - py / visHeight);
+                        const p = getAngle(a, b, a2, b2);
+                        ctx.arc(a, b, d.s, p + halfPI, p - halfPI, true);
+                        ctx.arc(a2, b2, _d.s, p + halfPI, p - halfPI);
+                        ctx.fill();
+                    }
+                }
+            }
+        };
+
+        const scroll = shared.firstCanvas = () => {
+            const visHeight = window.innerHeight / 2;
+            const y = window.pageYOffset;
+            if (y < visHeight && !running) {
+                running = true;
+                requestAnimationFrame(render);
+            }
+        };
+
+        DC.onwindow('resize', () => fitResolution(canvas, ctx, window.innerWidth, window.innerHeight));
+        DC.onwindow('scroll', scroll);
+    }
+
+    {
         let allChaptersLoaded = false;
+
+        const bounds = [];
+
+        const calcBounds = () => {
+            bounds.length = 0;
+            DC.iterObj(ram, (page, element) => {
+                bounds.push({top: element.offsetTop, page: page});
+            });
+            bounds.sortBy('top');
+            const top = window.pageYOffset;
+            const len = bounds.length;
+            let cur, found;
+            for (let i = len - 1; i; i -= 1) {
+                let p = bounds[i];
+                if (p.top < top + 100) {
+                    cur = p;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) cur = bounds[0];
+            if (!cur) return;
+            if (curChapter !== cur.page) {
+                saveChapter(cur.page);
+            }
+        };
 
         {
             controls.hide();
@@ -267,7 +430,7 @@ DC.ready(() => {
                     chapterList.forEach(c => {
                         const page = ram[c.page];
                         if (location.hostname === 'localhost') {
-                            page.attr({contenteditable: true});
+                            // page.attr({contenteditable: true});
                         }
                         page.into(view);
                     });
@@ -278,36 +441,11 @@ DC.ready(() => {
                     const h = controls.offsetHeight;
                     prevTop = top - h;
                     controls.css({top: prevTop});
+                    shared.firstCanvas && shared.firstCanvas();
 
                     calcBounds();
                 }, delay);
             });
-        }
-
-        const bounds = [];
-
-        function calcBounds() {
-            bounds.length = 0;
-            DC.iterObj(ram, (page, element) => {
-                bounds.push({top: element.offsetTop, page: page});
-            });
-            bounds.sortBy('top');
-            const top = window.pageYOffset;
-            const len = bounds.length;
-            let cur, found;
-            for (let i = len - 1; i; i -= 1) {
-                let p = bounds[i];
-                if (p.top < top + 100) {
-                    cur = p;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) cur = bounds[0];
-            if (!cur) return;
-            if (curChapter !== cur.page) {
-                saveChapter(cur.page);
-            }
         }
 
         DC.onwindow('scroll', () => {
@@ -395,5 +533,19 @@ DC.ready(() => {
             content.activate(curChapter);
         }
         localStorage.setItem('chapter', curChapter);
+    }
+
+    function randi(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randix(min, max) {
+        const n = randi(min, max);
+        if (min !== max && n === 0) {
+            return randix(min, max);
+        }
+        return n;
     }
 });
