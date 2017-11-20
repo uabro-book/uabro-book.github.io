@@ -95,7 +95,7 @@ DC.ready(() => {
             page: 'priority-project'
         },
         {
-            title: 'True or simulation',
+            title: 'True, false and simulation',
             page: 'true-or-simulation'
         },
         {
@@ -264,7 +264,13 @@ DC.ready(() => {
 
                 setTimeout(() => {
                     view.clear();
-                    chapterList.forEach(c => ram[c.page].into(view));
+                    chapterList.forEach(c => {
+                        const page = ram[c.page];
+                        if (location.hostname === 'localhost') {
+                            page.attr({contenteditable: true});
+                        }
+                        page.into(view);
+                    });
                     controls.show();
                     const top = localStorage.getItem('top');
                     go(localStorage.getItem('chapter') || chapterList[0]);

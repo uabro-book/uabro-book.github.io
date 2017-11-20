@@ -18,6 +18,10 @@ body {
     margin: 0;
 }
 
+b {
+    font-weight: bold;
+}
+
 p {
     text-indent: 30px;
     text-align: justify;
