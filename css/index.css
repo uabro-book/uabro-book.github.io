@@ -324,3 +324,24 @@ ul li:not(:last-child):after {
     height: 100%;
     pointer-events: none;
 }
+
+.animated-random-sequence {
+    text-indent: 0;
+    user-select: none;
+}
+
+.animated-random-sequence > span{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 20px;
+    vertical-align: middle;
+    font-family: sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.animated-random-sequence > span:first-child {
+    margin-left: 35px;
+}

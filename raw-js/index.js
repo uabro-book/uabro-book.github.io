@@ -345,7 +345,7 @@ DC.ready(() => {
                         grd.addColorStop(.5, '#46171f');
                         grd.addColorStop(1, _d.c);
                         ctx.fillStyle = grd;
-                        ctx.globalAlpha = (1 - l / _distance) * .85 * (1 - py / visHeight);
+                        ctx.globalAlpha = (1 - l / _distance) * .9 * (1 - py / visHeight);
                         const p = getAngle(a, b, a2, b2);
                         ctx.arc(a, b, d.s, p + halfPI, p - halfPI, true);
                         ctx.arc(a2, b2, _d.s, p + halfPI, p - halfPI);
@@ -366,6 +366,114 @@ DC.ready(() => {
 
         DC.onwindow('resize', () => fitResolution(canvas, ctx, window.innerWidth, window.innerHeight));
         DC.onwindow('scroll', scroll);
+    }
+
+    {
+        const isElementVisible = (el) => {
+            const rect = el.getBoundingClientRect(),
+                vWidth = window.innerWidth,
+                vHeight = window.innerHeight,
+                efp = function (x, y) {
+                    return document.elementFromPoint(x, y)
+                };
+
+            if (rect.right < 0 || rect.bottom < 0
+                || rect.left > vWidth || rect.top > vHeight) {
+                return false;
+            }
+
+            return (
+                el.contains(efp(rect.left, rect.top))
+                || el.contains(efp(rect.right, rect.top))
+                || el.contains(efp(rect.right, rect.bottom))
+                || el.contains(efp(rect.left, rect.bottom))
+            );
+        };
+
+        // use `animated` prefix for elements
+        // on - when element become visible
+        // off - when element become hidden
+        const elements = {
+            'animated-random-sequence': {
+                on() {
+                    this.fn();
+                },
+                fn() {
+                    if (this.mode) {
+                        requestAnimationFrame(this.fn.bind(this));
+                    }
+                    this.genText();
+                },
+                init() {
+                    const alphabet = (' qwertyuiopasdfghjklzxcvbnm1234567890' +
+                        '()=-+@#%*' +
+                        'йцукенгшщзхїфівапролджєячсмитьбю' +
+                        'QWERTYUIOPLKJHGFDSAZXCVBNM_$').split('').concat('😌', '😉', '😱', '🙀', '🌟', '🌸', '🍔');
+                    const words = [
+                        'слово', 'свобода', 'свідомість', 'воля', 'ідея',
+                        'натхнення', 'раціональність', 'розум', 'матерія', 'енергія',
+                        'energy', 'power', 'water', 'money', 'consciousness', 'freedom',
+                        'knowledge'
+                    ].map(w => w.split('').reverse());
+                    console.log(alphabet);
+
+                    const q = [];
+                    const max = 511;
+
+                    const arr = this.ref.t.split('').map(c => DC('span', {
+                        t: c
+                    }));
+                    this.ref.list(arr);
+
+                    let pointer;
+
+                    this.genText = () => {
+                        let c = '', w;
+                        if (q.length) {
+                            c = q.pop();
+                            w = true;
+                            pointer = pointer >= max - 1 ? pointer - max + 1 : pointer + 1;
+                        } else {
+                            c = alphabet[randi(0, alphabet.length - 1)];
+                            pointer = randi(0, max);
+                            if (randi(0, 40) > 37) {
+                                q.push(...words[randi(0, words.length - 1)]);
+                            }
+                        }
+                        const e = arr[pointer];
+                        if (e) {
+                            e.t = c;
+                            e.css({
+                                color: w ? 'rgb(' + randi(0, 155) + ',' + randi(0, 155) + ',' + randi(0, 155) + ')' :
+                                    randi(0, 9) > 2 ?
+                                        '#ddd' : '#444'
+                            });
+                        } else {
+                            console.log('err', e, pointer, arr.length);
+                        }
+                    }
+                }
+            }
+        };
+
+        const optimizeTimers = () => {
+            Object.entries(elements).map(([name, o]) => {
+                const ref = o.ref || $('.' + name);
+                if (ref) {
+                    if (!o.ref) {
+                        o.ref = ref;
+                        o.init();
+                    }
+                    const mode = isElementVisible(ref);
+                    if (mode !== o.mode) {
+                        o.mode = mode;
+                        mode ? o.on && o.on(ref) : o.off && o.off(ref);
+                    }
+                }
+            });
+        };
+
+        DC.onwindow('scroll', optimizeTimers);
     }
 
     {
