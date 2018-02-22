@@ -132,7 +132,7 @@ DC.ready(() => {
 
     const chapterList = [
         {
-            title: 'UABRO - age of intelligent freedom',
+            title: 'UABRO - age of consciousness',
             page: 'cover-page'
         },
         {

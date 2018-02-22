@@ -229,7 +229,7 @@ p {
     border-radius: 4px;
     overflow: hidden;
     vertical-align: middle;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4588235294117647);
+    box-shadow: 0 35px 75px rgba(216, 0, 0, 0.32), 0 -35px 75px rgba(255, 195, 0, 0.3411764705882353), -35px 0 75px rgba(10, 243, 0, 0.2901960784313726), 35px 0 75px rgba(0, 161, 255, 0.30196078431372547);
 }
 
 .logo > .uabro {
