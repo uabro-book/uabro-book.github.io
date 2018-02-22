@@ -1,4 +1,22 @@
-@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400');
+/* latin */
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Ubuntu Light'), local('Ubuntu-Light'), url(/css/ubuntu-1.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+
+/* latin */
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ubuntu Regular'), local('Ubuntu-Regular'), url(/css/ubuntu-2.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+
+
 
 ::selection {
     background: black;
@@ -205,13 +223,13 @@ p {
     margin: 15px 15px 5px;
     cursor: pointer;
     position: relative;
-    transition: 0.72s;
+    transition: 0.12s;
     width: 192px;
     height: 100px;
     border-radius: 4px;
     overflow: hidden;
     vertical-align: middle;
-    box-shadow: 0 35px 75px rgba(216, 0, 0, 0.32), 0 -35px 75px rgba(255, 195, 0, 0.3411764705882353), -35px 0 75px rgba(10, 243, 0, 0.2901960784313726), 35px 0 75px rgba(0, 161, 255, 0.30196078431372547);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4588235294117647);
 }
 
 .logo > .uabro {
@@ -316,7 +334,7 @@ ul li:not(:last-child):after {
     height: 1px;
 }
 
-.first-canvas {
+.first-canvas, .always-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -330,7 +348,7 @@ ul li:not(:last-child):after {
     user-select: none;
 }
 
-.animated-random-sequence > span {
+.animated-random-sequence > span{
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -345,3 +363,4 @@ ul li:not(:last-child):after {
 .animated-random-sequence > span:first-child {
     margin-left: 35px;
 }
+

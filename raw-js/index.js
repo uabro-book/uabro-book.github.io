@@ -59,6 +59,68 @@ const load = name => {
     return q;
 };
 
+const fitResolution = (canvas, ctx, width, height) => {
+    const devicePixelRatio = window.devicePixelRatio || 1,
+        backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+            ctx.mozBackingStorePixelRatio ||
+            ctx.msBackingStorePixelRatio ||
+            ctx.oBackingStorePixelRatio ||
+            ctx.backingStorePixelRatio || 1,
+        ratio = devicePixelRatio / backingStoreRatio;
+    if (devicePixelRatio !== backingStoreRatio) {
+
+        const oldWidth = width;
+        const oldHeight = height;
+
+        canvas.width = oldWidth * ratio;
+        canvas.height = oldHeight * ratio;
+
+        canvas.style.width = oldWidth + 'px';
+        canvas.style.height = oldHeight + 'px';
+
+        ctx.scale(ratio, ratio);
+
+    } else {
+        canvas.width = width;
+        canvas.height = height;
+    }
+};
+
+const calcLen = (x, y, x2, y2) => Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+const getAngle = (x, y, x2, y2) => Math.atan2(y2 - y, x2 - x);
+
+const sharedCanvasHelpers = {
+    colors: [
+        '#1a1a1a',
+        '#c44126',
+        '#cd7c00',
+        '#238dcd',
+        '#e4e000',
+        '#e48900',
+        '#e43b17',
+        '#31cd19',
+        '#cd3fc4',
+        '#562730',
+    ],
+    getOneColor() {
+        return this.colors[randi(0, this.colors.length - 1)];
+    }
+};
+
+function randi(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randix(min, max) {
+    const n = randi(min, max);
+    if (min !== max && n === 0) {
+        return randix(min, max);
+    }
+    return n;
+}
+
 DC.ready(() => {
     const app = DC({c: 'body'}).into(document.body);
     const view = DC({
@@ -236,52 +298,76 @@ DC.ready(() => {
 
     {
         const canvas = DC('canvas', {
+            c: 'always-canvas'
+        }).into(document.body);
+        const ctx = canvas.getContext('2d');
+
+        let running = false;
+
+        const arr = [];
+        const halfPI = Math.PI / 2;
+        const maxLen = 80;
+
+        const render = (force) => {
+            if (!running) {
+                if (!force) {
+                    return;
+                }
+                running = true;
+            } else if (force) {
+                return;
+            }
+            requestAnimationFrame(() => render());
+            const ww = window.innerWidth;
+            const wh = window.innerHeight;
+
+            fitResolution(canvas, ctx, ww, wh);
+
+            const len = arr.length;
+            for (let j = 0; j < len - 1; j += 1) {
+                const d = arr[j];
+                const _d = arr[j + 1];
+                const {x, y} = d;
+                const {x: x2, y: y2} = _d;
+                ctx.beginPath();
+                const grd = ctx.createLinearGradient(x, y, x2, y2);
+                grd.addColorStop(0, d.c);
+                grd.addColorStop(.5, '#46171f');
+                grd.addColorStop(1, _d.c);
+                ctx.fillStyle = grd;
+                ctx.globalAlpha = j / len;
+                const p = getAngle(x, y, x2, y2);
+                ctx.arc(x, y, d.s, p + halfPI, p - halfPI, true);
+                ctx.arc(x2, y2, _d.s, p + halfPI, p - halfPI);
+                ctx.fill();
+            }
+            if (Date.now() % 2 === 0) {
+                arr.shift();
+                if (!arr.length) {
+                    running = false;
+                }
+            }
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            arr.push({x: e.clientX, y: e.clientY, c: sharedCanvasHelpers.getOneColor(), s: 2});
+            if (arr.length >= maxLen) {
+                arr.shift();
+            }
+            render(true);
+        });
+    }
+
+    {
+        const canvas = DC('canvas', {
             c: 'first-canvas'
         }).into(document.body);
         const ctx = canvas.getContext('2d');
         let running = false;
 
-        const fitResolution = (canvas, ctx, width, height) => {
-            const devicePixelRatio = window.devicePixelRatio || 1,
-                backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
-                    ctx.mozBackingStorePixelRatio ||
-                    ctx.msBackingStorePixelRatio ||
-                    ctx.oBackingStorePixelRatio ||
-                    ctx.backingStorePixelRatio || 1,
-                ratio = devicePixelRatio / backingStoreRatio;
-            if (devicePixelRatio !== backingStoreRatio) {
-
-                const oldWidth = width;
-                const oldHeight = height;
-
-                canvas.width = oldWidth * ratio;
-                canvas.height = oldHeight * ratio;
-
-                canvas.style.width = oldWidth + 'px';
-                canvas.style.height = oldHeight + 'px';
-
-                ctx.scale(ratio, ratio);
-
-            } else {
-                canvas.width = width;
-                canvas.height = height;
-            }
-        };
-
         const dots = [];
         {
-            const colors = [
-                '#1a1a1a',
-                '#c44126',
-                '#cd7c00',
-                '#238dcd',
-                '#e4e000',
-                '#e48900',
-                '#e43b17',
-                '#31cd19',
-                '#cd3fc4',
-                '#562730',
-            ];
+            const colors = sharedCanvasHelpers.colors;
             const maxColors = colors.length - 1;
 
             for (let i = 0; i < 120; i += 1) {
@@ -297,9 +383,6 @@ DC.ready(() => {
         }
 
         const distance = .05;
-
-        const calcLen = (x, y, x2, y2) => Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
-        const getAngle = (x, y, x2, y2) => Math.atan2(y2 - y, x2 - x);
 
         const halfPI = Math.PI / 2;
 
@@ -415,7 +498,6 @@ DC.ready(() => {
                         'energy', 'power', 'water', 'money', 'consciousness', 'freedom',
                         'knowledge'
                     ].map(w => w.split('').reverse());
-                    console.log(alphabet);
 
                     const q = [];
                     const max = 511;
@@ -641,19 +723,5 @@ DC.ready(() => {
             content.activate(curChapter);
         }
         localStorage.setItem('chapter', curChapter);
-    }
-
-    function randi(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function randix(min, max) {
-        const n = randi(min, max);
-        if (min !== max && n === 0) {
-            return randix(min, max);
-        }
-        return n;
     }
 });
