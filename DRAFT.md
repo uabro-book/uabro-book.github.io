@@ -71,3 +71,14 @@
 - Time is a virtual concept to describe changes of part of reality relatively to other parts of reality. In most physical systems time compared to speed of light, which means 1 second is a change of state of light in reality equal to 299 792 458 meters of distance.
 - So you cannot travel back in time as there is no past. The only pseudo-theoretically possible thing here is to make state of reality to be same as in the past, which is practically impossibly for the whole universe as it is too big and no energy enough to rollback state of reality:
 - - Because we cannot store snapshot of state of whole universe as the universe itself is the only storage we have. No additional storages available, no where to store snapshots, no where to get snapshots from. Theoretically, we can snapshot only a part of state of reality.
+
+# Technology is the reason for consiousness
+People created technology to avoid necessary work so we can focus on what inspires and extends us.
+We don't need to hunt food anymore, because technology allows us to produce enough food and energy and process materials to create clothes and buildings, and maintaing infrastructure, and seemlessly and instantly communicate globally.
+
+Thousand years ago it was not possible.
+Nowadays, we can actually live lives.
+We can search the purpose and implement it and go deeper than ever in our thoughts and understanding.
+Technology extends our capabilities which causes extension of our consciosness.
+
+Without technologies we will loose all our focus on basic life-keeping things like food, home and safety.
