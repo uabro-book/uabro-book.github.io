@@ -24,17 +24,40 @@
 - - It is only a single point at any given time.
 
 # The way of transition
-- How we transform our society into desired state?
+- How we transform our society into a desired state?
 - It is risky to invest our lives into something theoretical yet, so why to do that?
 - - Invest if you cannot agree with a current state and its potential future
+- Conscios people should act efficiently
+- - Invest into high-profitable projects to further reinvest into [meaningful projects] (describe in dictionary)
 
 - Transition should be done accounting global economics and interests
 - - We live in a great legacy system. The world should understand benefits of the transition to allow and support it.
 
 # Theory of consciousness
+Consciousness is a key topic, questions and answers about:
+- who we are as individuals and civilazation
+- and where should we go
+
+- Meaningful project - type of project that allows deeper understanding of consciousness
+- - examples:
+- - - building a device to detect cosciousness
+- - - creating more efficient infrastructure where consciousness can grow and be expressed
+- - p.s. maybe come up with a better name to reflect its definition
+
 - Consciousness is mind is soul
 - Consciousness linked to an intelligent system (brain) with enough intelligent complexity in it (system requirements to install mind on a body)
 - Do animals have consciousness? (cats, dogs, apes, dolphins, whales etc)
+
+- Consciousness makes us alive
+- - it is the only thing that distinguishes living creature from non-living one like a programmed robot, artificial intelligence
+- - - consciosless systems should help us in making of [meaningful projects]
+- - so when any creature becomes consciousness, it becomes alive (how to detect consciousness though?)
+
+- Can people become consious enough to unite globally to revolutionize the world levaraging science, technology and co-empathy to other consious members?
+
+- Consciousness shines in an open world
+- - You need to have freedom and a favorable environment with high quality trusted knowledge to develop your consciosness
+- - You need a community so topics develop accounting for different experiences to find out universal principles and goals
 
 - Reincarnation is a transfer of mind to new living organism
 - - When people die, neuron connections of the brain destroyed which forces mind to detach from brain because its intelligence level is below a threshold required for consciousness to be linked with a brain.
